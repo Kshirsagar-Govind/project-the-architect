@@ -4,7 +4,7 @@ import api from "../../api/axios";
 import { getCurrentUser } from "../../utils/getCurrentUser";
 import '../../index.css'
 
-export default function Login() {
+export default function LoginClient() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -21,7 +21,7 @@ export default function Login() {
     }
     try {
       setLoading(true);
-      const res = await api.post("/auth/login", { email, password });
+      const res = await api.post("/client/login", { email, password });
       localStorage.setItem("token", res.data.token);
       
       // Fetch user info to get role
@@ -137,15 +137,15 @@ export default function Login() {
         </form>
 
         <div className="mt-6 text-center space-y-2">
-          <div className="text-sm text-gray-600">
+          {/* <div className="text-sm text-gray-600">
             Don't have an account?{' '}
             <Link to="/auth/register-user" className="text-teal-600 hover:text-teal-700 font-medium">
               Register as Staff
             </Link>
-          </div>
+          </div> */}
           <div className="text-sm text-gray-600">
             <Link to="/auth/register-client" className="text-teal-600 hover:text-teal-700 font-medium">
-              Register as Client →
+              Register →
             </Link>
           </div>
         </div>

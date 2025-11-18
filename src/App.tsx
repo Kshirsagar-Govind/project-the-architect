@@ -1,12 +1,14 @@
-import './App.css'
-import AuthRoutes from './routes/auth.routes'
-
+import AllRoutes from './routes';
+import {NavigationProvider} from './contexts/navigation/navigationProvider'
+import './index.css'
 function App() {
 
   return (
-    <>
-      <AuthRoutes/>
-    </>
+    <div className="min-h-screen bg-gray-50">
+      <NavigationProvider>
+        <AllRoutes/>
+      </NavigationProvider>
+    </div>
   )
 }
 
