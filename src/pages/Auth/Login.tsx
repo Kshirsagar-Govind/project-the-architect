@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {  useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 import { getCurrentUser } from "../../utils/getCurrentUser";
@@ -12,7 +12,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async (e?: React.FormEvent) => {
+  const handleLogin = async (e?: React.FormEvent) => {e
     e?.preventDefault();
     setError(null);
     if (!email || !password) {
@@ -31,11 +31,11 @@ export default function Login() {
         
         // Redirect based on role
         const role = user.role;
-        if (role === "admin") {
+        if (role == "ADMIN") {
           navigate("/dashboard/admin");
-        } else if (role === "manager") {
+        } else if (role == "MANAGER") {
           navigate("/dashboard/manager");
-        } else if (role === "member") {
+        } else if (role == "MEMBER") {
           navigate("/dashboard/tester");
         } else {
           navigate("/dashboard");
