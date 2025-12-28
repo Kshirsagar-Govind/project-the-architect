@@ -17,8 +17,13 @@ import ProjectManagers from './pages/Admin/projectManagerList'
 import AllProjects from './pages/Admin/pojects'
 import AdminLayout from './layouts/AdminLayout'
 import PMLayout from './layouts/ProjectManagerLayout'
+import EmployeeLayout from './layouts/EmployeeLayout';
 import Reports from './pages/PM/reports'
+import TesterReports from './pages/Tester/reports'
 import TicketSupport from './pages/PM/TicketSupport'
+import Dashboard from './pages/Tester/dashbaord'
+import ReportForm from './pages/Tester/reportForm'
+import Overview from './pages/Tester/overview'
 
 export default function App() {
   return (
@@ -43,7 +48,7 @@ export default function App() {
         <Route path='employees' element={<Employees />} />
       </Route>
 
-      <Route path='/dashboard/manager'
+      <Route path='/manager'
         element={
           <ProtectedRoute allowedRoles={['MANAGER', 'ADMIN']}>
             <PMLayout />
@@ -51,9 +56,25 @@ export default function App() {
         }
       >
         <Route index element={<ManagerDashboard />} />
-        <Route path='reports' element={<Reports />} />
-        <Route path='ticket-support' element={<TicketSupport />} />
+        <Route path='overview/:p_id' element={<Overview />} />
+        <Route path='reports/:p_id' element={<Reports />} />
+        <Route path='ticket-support/:p_id' element={<TicketSupport />} />
+      </Route>
+
+      <Route path='/tester'
+        element={
+          <ProtectedRoute allowedRoles={['MANAGER', 'MEMBER']}>
+            <EmployeeLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Dashboard />} />
+        <Route path='overview/:p_id' element={<Overview />} />
+        <Route path='my-reports/:p_id' element={<TesterReports />} />
+        <Route path='submit-report/:p_id' element={<ReportForm />} />
       </Route>
     </Routes>
+
+    
   )
 }

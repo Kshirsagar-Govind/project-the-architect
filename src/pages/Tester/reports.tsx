@@ -1,12 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchVulnerabilities } from "../../services/project.services";
-import {
-  AlertCircle,
-  RefreshCcw,
-  Wrench,
-  BadgeCheck,
-  CircleCheckBig
-} from "lucide-react";
+import { getUser } from "../../utils/auth";
+import { MdEditDocument, MdDelete } from "react-icons/md"
+import {useNavigate, useParams} from 'react-router-dom'
 
 const table = {
   width: "100%",
@@ -22,7 +18,7 @@ const th = {
   backgroundColor: "#4DB6AC",
   color: "#fff",
   fontSize: "14px",
-  fontWeight: '400'
+  fontWeight:'400'
 };
 
 const td = {
@@ -43,30 +39,15 @@ const actionBtn = {
   cursor: "pointer",
   fontSize: "13px",
 };
-const statusActions = {
-  open: ["in-progress"],
-  "in-progress": ["fixed"],
-  fixed: ["verified"],
-  verified: ["open", "closed"],
-  closed: [],
-};
-
-const STATUS_CONFIG = {
-  open: { tooltip: "Change to open", color: "#fbbf24", icon: <AlertCircle color="#fbbf24" size={'22px'} /> },
-  "in-progress": { tooltip: "Change to In-progress", color: "#3b82f6", icon: <RefreshCcw color="#60a5fa" size={'22px'} /> },
-  fixed: { tooltip: "Change to Fixed", color: "#6366f1", icon: <Wrench color="#818cf8" size={'22px'} /> },
-  verified: { tooltip: "Change to Verified", color: "#22c55e", icon: <BadgeCheck color="#4ade80" size={'22px'} /> },
-  closed: { tooltip: "Change to Closed", color: "#16a34a", icon: <CircleCheckBig color="#22c55e" size={'22px'} /> },
-};
 
 const severityBadge = (severity: string) => {
   const colors: any = {
-    critical: "rgba(220, 38, 38, 0.7)", // soft red
-    high: "rgba(249, 115, 22, 0.7)",    // soft orange
-    medium: "rgba(250, 204, 21, 0.7)",  // soft yellow
-    low: "rgba(22, 163, 74, 0.7)",      // soft green
-  }
-    ;
+  critical: "rgba(220, 38, 38, 0.7)", // soft red
+  high: "rgba(249, 115, 22, 0.7)",    // soft orange
+  medium: "rgba(250, 204, 21, 0.7)",  // soft yellow
+  low: "rgba(22, 163, 74, 0.7)",      // soft green
+}
+;
 
   return {
     backgroundColor: colors[severity] || "#6b7280",
@@ -80,11 +61,14 @@ const severityBadge = (severity: string) => {
 
 
 export default function Reports() {
-  const projectId = "694fb378bf4c10a1d0df6e14";
+  const { p_id } = useParams()
 
+  const projectId = p_id;
+  const user = getUser();
+  const navigate = useNavigate();
   const { data, error, isLoading } = useQuery({
     queryKey: ["vulnerability", projectId],
-    queryFn: () => fetchVulnerabilities({ projectId, filters: {} }),
+    queryFn: () => fetchVulnerabilities({ projectId, filters:{reportedBy:user._id} }),
     staleTime: 0,
   });
 
@@ -98,8 +82,9 @@ export default function Reports() {
   }
 
   return (
-    <div style={{ padding: "24px" }}>
+    <div style={{ paddingBottom: "24px" }}>
       <h2 className="text-xl pb-4">Vulnerability Reports</h2>
+
       <table style={table}>
         <thead>
           <tr>
@@ -110,14 +95,14 @@ export default function Reports() {
             <th style={th}>CVSS</th>
             <th style={th}>Endpoint</th>
             <th style={th}>Reported On</th>
-            <th style={th}>Action</th>
+            <th style={th} className="text-center">Action</th>
           </tr>
         </thead>
 
         <tbody>
           {vulnerabilities.map((vul) => (
-            <tr key={vul._id} style={row}>
-              <td style={td}>{vul.title}</td>
+            <tr key={vul._id} style={row} >
+              <td style={td} className="pl-2">{vul.title}</td>
               <td style={td}>{vul.vulnerabilityType}</td>
 
               <td style={td} className="text-center">
@@ -135,25 +120,20 @@ export default function Reports() {
               </td>
 
               <td style={td} className="text-center flex flex-row justify-center items-center">
-                {
-                  statusActions[vul.status].length == 0 ?
-                    <button disabled>
-                      <CircleCheckBig size={'22px'} color="gray" />
-                    </button>
-                    : statusActions[vul.status].map(item => {
-                      return (
-                        <div
-                          title={item.tooltip}
-                          className="">
-                          <button
-                            className="px-1">
-                            {STATUS_CONFIG[item].icon}
-                          </button>
-                        </div>
-                      )
-                    })
-                }
-
+                <button
+                  style={actionBtn}
+                  // className="bg-primary-dark"
+                  onClick={() => navigate(`/tester/submit-report/${projectId}?report_id=${vul._id}`)}
+                >
+                  <MdEditDocument className="text-primary" size={'20px'} />
+                </button>
+                <button
+                  style={actionBtn}
+                  // className="bg-primary-dark"
+                  onClick={() => console.log("Update", vul._id)}
+                >
+                  <MdDelete className="text-primary" size={'20px'} />
+                </button>
               </td>
             </tr>
           ))}

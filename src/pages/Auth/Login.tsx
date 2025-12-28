@@ -34,9 +34,9 @@ export default function Login() {
         if (role == "ADMIN") {
           navigate("/dashboard/admin");
         } else if (role == "MANAGER") {
-          navigate("/dashboard/manager");
+          navigate("/manager");
         } else if (role == "MEMBER") {
-          navigate("/dashboard/tester");
+          navigate("/tester");
         } else {
           navigate("/dashboard");
         }

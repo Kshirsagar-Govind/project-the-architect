@@ -1,11 +1,13 @@
 import { FiBriefcase, FiUser, FiUsers } from "react-icons/fi"
 import { projectStatusStyles } from "./statusColorMap"
+import { NavLink } from "react-router-dom"
 
 type Props = {
+  role: string;
   project: any
 }
 
-export default function ProjectCard({ project }: Props) {
+export default function ProjectCard({ role, project }: Props) {
   return (
     <div className="bg-white border rounded-xl p-5 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all ease-linear">
 
@@ -27,7 +29,6 @@ export default function ProjectCard({ project }: Props) {
       <p className="text-gray-600 text-sm mt-2 line-clamp-2">
         {project.desc}
       </p>
-
       {/* Meta Info */}
       <div className="mt-4 space-y-2 text-sm text-gray-600">
 
@@ -68,6 +69,14 @@ export default function ProjectCard({ project }: Props) {
             <span className="text-xs text-primary-dark">No testers assigned</span>
           )}
         </div>
+      </div>
+
+      <div className="">
+
+        <NavLink
+          className={'pl-5 inline-flex items-center py-2 w-full h-full'}
+          to={`/${role == 'MANAGER' ? 'manager' : 'tester'}/overview/${project._id}`}>
+          Go to</NavLink>
       </div>
 
     </div>

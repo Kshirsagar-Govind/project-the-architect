@@ -5,7 +5,6 @@ import ProjectCard from "../../components/common/projectCard";
 
 export default function Dashboard() {
     const user = getUser();
-    console.log(user, 'useruser');
     const {
         data,
         error,
@@ -13,7 +12,7 @@ export default function Dashboard() {
         = useQuery(
             {
                 queryKey: ['project', user._id],
-                queryFn: () => fetchProjects({ manager: user._id }),
+                queryFn: () => fetchProjects({ member: user._id }),
                 enabled: !!user._id
             })
 

@@ -1,11 +1,14 @@
-import { Outlet, NavLink } from "react-router-dom";
+import { Outlet, NavLink, useParams } from "react-router-dom";
 import { managerLinks } from "../pages/Admin/routes";
 import { FiBell, FiChevronDown, FiLogOut, FiUser } from "react-icons/fi";
 import { getUser } from "../utils/auth";
 import { logout } from "../services/auth.service";
+import { RiDashboardHorizontalFill } from "react-icons/ri";
 
 export default function PMLayout() {
     const user = getUser()
+    const { p_id } = useParams()
+
     return (
         <div className="flex min-h-screen bg-gray-100">
 
@@ -16,11 +19,15 @@ export default function PMLayout() {
                 </h3>
                 <nav className="space-y-3">
                     <ul>
+                        <NavLink className={'pl-5 inline-flex items-center py-2 w-full h-full'} to={'/tester'}>
+                            <span className="pr-3"><RiDashboardHorizontalFill /></span>
+                            Dashboard
+                        </NavLink>
                         {
-                            managerLinks.map((link, index) => {
+                            p_id != undefined && managerLinks.map((link, index) => {
                                 return (
                                     <li key={index} className="flex align-middle items-center my-3 hover:bg-primary-darker">
-                                        <NavLink className={'pl-5 inline-flex items-center py-2 w-full h-full'} to={link.linkPath}>
+                                        <NavLink className={'pl-5 inline-flex items-center py-2 w-full h-full'} to={link.linkPath.replace(':p_id', p_id)}>
                                             <span className="pr-3">{<link.icon />}</span>
                                             {link.linkLabel}
                                         </NavLink>
