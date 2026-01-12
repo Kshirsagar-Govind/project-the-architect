@@ -5,14 +5,15 @@ import ProjectCard from "../../components/common/projectCard";
 
 export default function Dashboard() {
     const user = getUser();
+    console.log(user, 'useruser');
     const {
         data,
         error,
         isLoading }
         = useQuery(
             {
-                queryKey: ['project_manager', user.id],
-                queryFn: () => fetchProjects({ manager: user.id }),
+                queryKey: ['project_'+user.id, user.id],
+                queryFn: () => fetchProjects({ client: user.id }),
                 enabled: !!user.id
             })
 
@@ -21,10 +22,10 @@ export default function Dashboard() {
             {
                 isLoading ?
                     <h1>Loading...</h1> :
-                    data && data.length > 0 ?
+                    data.length > 0 ?
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {data.map(pro => {
-                                return (<><ProjectCard role={user.role} project={pro} /></>)
+                                return (<><ProjectCard role={'CLIENT'} project={pro} /></>)
                             })}
                         </div>
                         :

@@ -1,8 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
-import { fetchVulnerabilities } from "../../services/project.services";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { deleteVulnerability, fetchVulnerabilities } from "../../services/project.services";
 import { getUser } from "../../utils/auth";
 import { MdEditDocument, MdDelete } from "react-icons/md"
-import {useNavigate, useParams} from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useState } from "react";
 
 const table = {
   width: "100%",
@@ -18,7 +19,7 @@ const th = {
   backgroundColor: "#4DB6AC",
   color: "#fff",
   fontSize: "14px",
-  fontWeight:'400'
+  fontWeight: '400'
 };
 
 const td = {
@@ -42,12 +43,11 @@ const actionBtn = {
 
 const severityBadge = (severity: string) => {
   const colors: any = {
-  critical: "rgba(220, 38, 38, 0.7)", // soft red
-  high: "rgba(249, 115, 22, 0.7)",    // soft orange
-  medium: "rgba(250, 204, 21, 0.7)",  // soft yellow
-  low: "rgba(22, 163, 74, 0.7)",      // soft green
-}
-;
+    CRITICAL: "rgba(220, 38, 38, 0.7)", // soft red
+    HIGH: "rgba(249, 115, 22, 0.7)",    // soft orange
+    MEDIUM: "rgba(250, 204, 21, 0.7)",  // soft yellow
+    LOW: "rgba(22, 163, 74, 0.7)",      // soft green
+  };
 
   return {
     backgroundColor: colors[severity] || "#6b7280",
@@ -62,15 +62,27 @@ const severityBadge = (severity: string) => {
 
 export default function Reports() {
   const { p_id } = useParams()
+  const [hideRevoked, setHideRevoked] = useState(true);
 
   const projectId = p_id;
   const user = getUser();
   const navigate = useNavigate();
   const { data, error, isLoading } = useQuery({
     queryKey: ["vulnerability", projectId],
-    queryFn: () => fetchVulnerabilities({ projectId, filters:{reportedBy:user._id} }),
+    queryFn: () => fetchVulnerabilities({ projectId, filters: { reportedBy: user.id } }),
     staleTime: 0,
   });
+
+
+  const deleteReport = useMutation({
+    mutationFn: deleteVulnerability,
+    onSuccess: () => {
+      console.log('Deleted');
+    },
+    onError: (e: any) => {
+      console.log("ERROR", e);
+    },
+  })
 
   if (isLoading) return <p>Loading reports...</p>;
   if (error) return <p>Error while fetching reports</p>;
@@ -100,43 +112,47 @@ export default function Reports() {
         </thead>
 
         <tbody>
-          {vulnerabilities.map((vul) => (
-            <tr key={vul._id} style={row} >
-              <td style={td} className="pl-2">{vul.title}</td>
-              <td style={td}>{vul.vulnerabilityType}</td>
+          {vulnerabilities.map((vul) => {
+            if(hideRevoked && vul.status=='REVOKED') return;
+            return (
+              <tr key={vul.id} style={row} >
+                <td style={td} className="pl-2">{vul.title}</td>
+                <td style={td}>{vul.vulnerabilityType}</td>
 
-              <td style={td} className="text-center">
-                <span style={severityBadge(vul.severity)}>
-                  {vul.severity.toUpperCase()}
-                </span>
-              </td>
+                <td style={td} className="text-center">
+                  <span style={severityBadge(vul.severity)}>
+                    {vul.severity.toUpperCase()}
+                  </span>
+                </td>
 
-              <td style={td} className="text-center">{vul.status}</td>
-              <td style={td} className="text-center">{vul.cvss}</td>
-              <td style={td} className="text-center">{vul.affectedEndpoint}</td>
+                <td style={td} className="text-center">{vul.status}</td>
+                <td style={td} className="text-center">{vul.cvss}</td>
+                <td style={td} className="text-center">{vul.affectedEndpoint}</td>
 
-              <td style={td} className="text-center">
-                {new Date(vul.createdAt).toLocaleDateString()}
-              </td>
+                <td style={td} className="text-center">
+                  {new Date(vul.createdAt).toLocaleDateString()}
+                </td>
 
-              <td style={td} className="text-center flex flex-row justify-center items-center">
-                <button
-                  style={actionBtn}
-                  // className="bg-primary-dark"
-                  onClick={() => navigate(`/tester/submit-report/${projectId}?report_id=${vul._id}`)}
-                >
-                  <MdEditDocument className="text-primary" size={'20px'} />
-                </button>
-                <button
-                  style={actionBtn}
-                  // className="bg-primary-dark"
-                  onClick={() => console.log("Update", vul._id)}
-                >
-                  <MdDelete className="text-primary" size={'20px'} />
-                </button>
-              </td>
-            </tr>
-          ))}
+                <td style={td} className="text-center flex flex-row justify-center items-center">
+                  <button
+                    style={actionBtn}
+                    // className="bg-primary-dark"
+                    onClick={() => navigate(`/tester/submit-report/${projectId}?report_id=${vul.id}`)}
+                  >
+                    <MdEditDocument className="text-primary" size={'20px'} />
+                  </button>
+                  <button
+                    style={actionBtn}
+                    // className="bg-primary-dark"
+                    onClick={() => deleteReport.mutate({ reportId: vul.id })}
+                  >
+                    <MdDelete className="text-primary" size={'20px'} />
+                  </button>
+                </td>
+              </tr>
+            )
+          }
+          )}
         </tbody>
       </table>
     </div>

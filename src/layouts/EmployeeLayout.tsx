@@ -6,7 +6,7 @@ import { logout } from "../services/auth.service";
 import { useEffect } from "react";
 import { RiDashboardHorizontalFill } from "react-icons/ri";
 
-export default function PMLayout() {
+export default function EmployeeLayout() {
     const user = getUser()
     const { p_id } = useParams()
     useEffect(() => {

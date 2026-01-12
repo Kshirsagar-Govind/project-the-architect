@@ -70,8 +70,6 @@ export default function AddProject() {
     }
     try {
       setLoading(true);
-      console.log(formData,'==============================formData');
-      
       await api.post("/project", formData);
       setLoading(false);
       navigate("/dashboard/projects");

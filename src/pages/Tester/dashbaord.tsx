@@ -11,9 +11,9 @@ export default function Dashboard() {
         isLoading }
         = useQuery(
             {
-                queryKey: ['project', user._id],
-                queryFn: () => fetchProjects({ member: user._id }),
-                enabled: !!user._id
+                queryKey: ['project', user.id],
+                queryFn: () => fetchProjects({ member: user.id }),
+                enabled: !!user.id
             })
 
     return (
@@ -21,7 +21,7 @@ export default function Dashboard() {
             {
                 isLoading ?
                     <h1>Loading...</h1> :
-                    data.length > 0 ?
+                    data && data.length > 0 ?
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {data.map(pro => {
                                 return (<><ProjectCard role={user.role} project={pro} /></>)

@@ -19,7 +19,7 @@ export default function PMLayout() {
                 </h3>
                 <nav className="space-y-3">
                     <ul>
-                        <NavLink className={'pl-5 inline-flex items-center py-2 w-full h-full'} to={'/tester'}>
+                        <NavLink className={'pl-5 inline-flex items-center py-2 w-full h-full'} to={'/manager'}>
                             <span className="pr-3"><RiDashboardHorizontalFill /></span>
                             Dashboard
                         </NavLink>

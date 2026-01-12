@@ -3,7 +3,7 @@ import { Pencil, UserPlus } from "lucide-react";
 // import AssignManager from "./Forms/assignPM";
 import PopupBackground from "../../components/common/popupBackground";
 import { useQuery } from "@tanstack/react-query";
-import { fetchProjects, updateProject } from "../../services/project.services";
+import { assignMembersProject, fetchProjects, updateProject } from "../../services/project.services";
 import { useDebounce } from '../../hooks/useDebounce'
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchUsers } from "../../services/users.services";
@@ -25,14 +25,14 @@ export default function AllProjects() {
   }), [debounceTitle, debounceClientEmail, status])
 
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['project', filters], queryFn: () => fetchProjects(filters)
+  const { data:project=[], isLoading, isError } = useQuery({
+    queryKey: ['project_1', filters], queryFn: () => fetchProjects(filters)
   })
 
   const [showAssignPM, setShowAssignPM] = useState(false)
   // const [selectedProjectId, setSelectedProjectId] = useState<Project>()
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-
+console.log(project);
 
   return (
     <section className="space-y-6">
@@ -100,57 +100,62 @@ export default function AllProjects() {
 
           <tbody>
             {
-              isLoading ?
+              isError ?
                 <tr className="border-t hover:bg-gray-50">
-                  <th className="col-span-full py-2">Fetching project...</th>
+                  <th className="col-span-full py-2">Error in fetching project...</th>
                 </tr>
                 :
-                data.length > 0 ?
-                  data.map((p: Project) => (
-                    <tr key={p._id} className="border-t hover:bg-gray-50">
-                      <td className="px-4 py-3 text-left">{p._id}</td>
-                      <td className="px-4 py-3 text-left font-medium">{p.title}</td>
-                      <td className="px-4 py-3 text-left">{p.projectType}</td>
-                      <td className="px-4 py-3 text-left">{p.client.name}</td>
-                      <td className={`px-4 py-3 text-left`}>
-                        {p.manager ? (
-                          p.manager.name
-                        ) : 
-                        <span className='text-xs px-2 py-1 rounded-full bg-error-light text-white'>
-                        N/A
-                        </span>
-                        }
-                      </td>
-
-                      <td className="px-4 py-3 text-left">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium
-                      ${p.status === "completed"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-yellow-100 text-yellow-700"
-                            }`}
-                        >
-                          {p.status}
-                        </span>
-                      </td>
-
-                      <td className="px-4 py-3 text-center">{p.members.length>0?p.members.length:'N/A'}</td>
-                      {/* <td className="px-4 py-3">{p.createdOn}</td> */}
-
-                      <td className="px-4 py-3 text-center">
-                        <button 
-                            onClick={() => { setShowAssignPM(true); setSelectedProject(p) }}
-                        className="text-gray-600 hover:text-primary-dark">
-                          <Pencil size={16} />
-                        </button>
-                      </td>
-                    </tr>
-                  )) :
-                  <tr className="border-t hover:bg-gray-50 py-2">
-                    <th className="col-span-full py-2">
-                      No Projects Found.
-                    </th>
+                isLoading ?
+                  <tr className="border-t hover:bg-gray-50">
+                    <th className="col-span-full py-2">Fetching project...</th>
                   </tr>
+                  :
+                  project.length > 0 ?
+                    project.map((p: Project) => (
+                      <tr key={p.id} className="border-t hover:bg-gray-50">
+                        <td className="px-4 py-3 text-left">{p.id}</td>
+                        <td className="px-4 py-3 text-left font-medium">{p.title}</td>
+                        <td className="px-4 py-3 text-left">{p.projectType}</td>
+                        <td className="px-4 py-3 text-left">{p.client.name}</td>
+                        <td className={`px-4 py-3 text-left`}>
+                          {p.manager ? (
+                            p.manager.name
+                          ) :
+                            <span className='text-xs px-2 py-1 rounded-full bg-error-light text-white'>
+                              N/A
+                            </span>
+                          }
+                        </td>
+
+                        <td className="px-4 py-3 text-left">
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-medium
+                      ${p.status === "completed"
+                                ? "bg-green-100 text-green-700"
+                                : "bg-yellow-100 text-yellow-700"
+                              }`}
+                          >
+                            {p.status}
+                          </span>
+                        </td>
+
+                        <td className="px-4 py-3 text-center">{p.members.length > 0 ? p.members.length : 'N/A'}</td>
+                        {/* <td className="px-4 py-3">{p.createdOn}</td> */}
+
+                        <td className="px-4 py-3 text-center">
+                          <button
+                            onClick={() => { setShowAssignPM(true); setSelectedProject(p) }}
+                            className="text-gray-600 hover:text-primary-dark">
+                            <Pencil size={16} />
+                          </button>
+                        </td>
+                      </tr>
+                    )) :
+                    <tr className="border-t hover:bg-gray-50 py-2">
+                      <th className="col-span-full py-2">
+                        No Projects Found.
+                      </th>
+                    </tr>
             }
           </tbody>
         </table>
@@ -159,8 +164,8 @@ export default function AllProjects() {
         showAssignPM && selectedProject &&
         <PopupBackground>
           <ProjectEdit
-          onClose={() => setShowAssignPM(false)}
-          project={selectedProject}
+            onClose={() => setShowAssignPM(false)}
+            project={selectedProject}
           />
         </PopupBackground>
       }
@@ -177,38 +182,47 @@ type ProjectEditProps = {
 export function ProjectEdit({ project, onClose }: ProjectEditProps) {
   const queryClient = useQueryClient();
 
-  const [managerId, setManagerId] = useState(project.manager?._id || "");
+  const [managerId, setManagerId] = useState(project.manager?.id || "");
   const [status, setStatus] = useState(project.status);
-  const [testerIds, setTesterIds] = useState<string[]>(project.members.map(te=> te._id));
+  const [testerIds, setTesterIds] = useState<string[]>(project.members?project.members.map((te:any) => te.userId):[]);
 
   /* 🔹 Fetch Managers */
   const {
     data: managers = [],
   } = useQuery(
     {
-      queryKey: ["user", "MANAGER"],
+      queryKey: ["manager", "MANAGER"],
       queryFn: () => fetchUsers("MANAGER"),
     });
 
   /* 🔹 Fetch Testers */
   const { data: testers = [] } = useQuery({
-    queryKey: ['user', "MEMBER"],
-    queryFn: () => fetchUsers("MEMBER"),
+    queryKey: ['tester', "TESTER"],
+    queryFn: () => fetchUsers("TESTER"),
   });
 
   /* 🔹 Update Project */
   const mutation = useMutation({
     mutationFn: () =>
-      updateProject({
+      assignMembersProject({
         manager: managerId,
         status,
         members: testerIds,
-      }, project._id),
+      }, project.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["project"] });
       onClose();
     },
   });
+console.log(testers,'testers');
+console.log(testerIds,'testerIds');
+
+const isAlreadyTester=(id:string)=>{
+  console.log(id,'+++++',testerIds.includes(id), {testerIds});
+  
+  if(testerIds.includes(id)) return true;
+  return false;
+}
 
   return (
     <PopupBackground>
@@ -225,7 +239,7 @@ export function ProjectEdit({ project, onClose }: ProjectEditProps) {
           >
             <option value="">Select Manager</option>
             {managers.map((m: User) => (
-              <option key={m._id} value={m._id}>
+              <option key={m.id} value={m.id}>
                 {m.name} ({m.email})
               </option>
             ))}
@@ -252,17 +266,18 @@ export function ProjectEdit({ project, onClose }: ProjectEditProps) {
           <label className="block text-sm font-medium">Assign Testers</label>
           <div className="max-h-40 overflow-y-auto border rounded p-2 space-y-1">
             {testers.map((t: User) => (
-              <label key={t._id} className="flex items-center gap-2 text-sm">
+              <label key={t.id} className="flex items-center gap-2 text-sm">
                 <input
                   type="checkbox"
-                  checked={testerIds.includes(t._id)}
-                  onChange={(e) => {
-                    setTesterIds((prev) =>
-                      e.target.checked
-                        ? [...prev, t._id]
-                        : prev.filter((id) => id !== t._id)
-                    );
-                  }}
+                  checked={isAlreadyTester(t.id)}
+                 onChange={(e) => {
+                  setTesterIds((prev) =>
+                    e.target.checked
+                      ? [...prev, t.id]          // CHECK
+                      : prev.filter((id) => id !== t.id) // UNCHECK
+                  );
+                }}
+
                 />
                 {t.name}
               </label>

@@ -10,11 +10,11 @@ type Tester = {
   id: string;
   name: string;
   email: string;
-  role: 'MEMBER' | 'MANAGER'
+  role: 'TESTER' | 'MANAGER'
   accountStatus: 'PENDING' | 'ACTIVE' | 'BLOCKED' | 'DELETED';
 };
 
-const role = "MEMBER";
+const role = "TESTER";
 export default function Employees() {
   const [selectedTester, setTester] = useState<Tester>();
   const [editing, setEditing] = useState<boolean>(false);

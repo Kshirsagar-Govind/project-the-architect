@@ -8,6 +8,8 @@ type Props = {
 }
 
 export default function ProjectCard({ role, project }: Props) {
+  console.log(project,'projectproject');
+  
   return (
     <div className="bg-white border rounded-xl p-5 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all ease-linear">
 
@@ -52,30 +54,22 @@ export default function ProjectCard({ role, project }: Props) {
       <div className="mt-4">
         <div className="flex items-center gap-2 mb-2 text-sm text-gray-600">
           <FiUsers className="text-primary-dark" />
-          <span><b>Testers</b></span>
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          {project.members.length > 0 ? (
-            project.members.map((m: any) => (
-              <span
-                key={m._id}
+          <span><b>Testers: </b>
+          <span
                 className="text-xs bg-gray-100 px-2 py-1 rounded-full"
               >
-                {m.name}
+                {project.members.length}
               </span>
-            ))
-          ) : (
-            <span className="text-xs text-primary-dark">No testers assigned</span>
-          )}
+          </span>
         </div>
+
       </div>
 
       <div className="">
 
         <NavLink
           className={'pl-5 inline-flex items-center py-2 w-full h-full'}
-          to={`/${role == 'MANAGER' ? 'manager' : 'tester'}/overview/${project._id}`}>
+          to={`/${role == 'MANAGER' ? 'manager/' : role=='TESTER'? 'tester/':''}overview/${project.id}`}>
           Go to</NavLink>
       </div>
 

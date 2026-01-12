@@ -73,3 +73,16 @@ export const testerLinks= [
     icon: FaFileLines,
   },
 ]
+
+export const clientLinks= [
+  {
+    linkPath: "/overview/:p_id",
+    linkLabel: "Overview",
+    icon: MdAnalytics,
+  },
+  {
+    linkPath: "/reports/:p_id",
+    linkLabel: "Reports",
+    icon: MdError,
+  }
+]

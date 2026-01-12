@@ -1,15 +1,18 @@
 import { FiUsers, FiBriefcase, FiUserCheck, FiPlus } from "react-icons/fi";
 import AddClient from "./Forms/addClient";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import PopupBackground from "../../components/common/popupBackground";
 import AddManager from "./Forms/addManager";
+import { fetchUsers } from "../../services/users.services";
+import { useQuery } from "@tanstack/react-query";
+import { fetchProjects } from "../../services/project.services";
 
 type StatCardProps = {
   title: string;
   count: number;
   icon: React.ReactNode;
-  link:string,
-  onAdd?: ()=>void;
+  link: string,
+  onAdd?: () => void;
 };
 
 function StatCard({ title, count, icon, onAdd }: StatCardProps) {
@@ -45,15 +48,59 @@ function StatCard({ title, count, icon, onAdd }: StatCardProps) {
 export default function Dashboard() {
   const [showAddClientForm, setShowAddClientForm] = useState(false);
   const [showAddPMForm, setShowAddPMForm] = useState(false);
+  const [clients, setClients] = useState([]);
+  const [testers, setTesters] = useState([]);
+  const [managers, setManagers] = useState([]);
   const [showAddTestersForm, setShowAddTesterForm] = useState(false);
 
-  useEffect(()=>{
+  const {
+    data,
+    isLoading,
+    error
+  } = useQuery(
+    {
+      queryKey: ["user", ''],
+      queryFn: () => fetchUsers(''),
+      staleTime: 1000 * 60 * 5
+    });
 
-  },[
+  const {
+    data: Projects = [],
+    isLoading: projectDataLoading = false
+  } = useQuery(
+    {
+      queryKey: ["project", ''],
+      queryFn: () => fetchProjects({}),
+      staleTime: 1000 * 60 * 5
+    });
+
+
+
+  const filtered = useMemo(() => {
+    const temp_clients: any[] = [];
+    const temp_managers: any[] = [];
+    const temp_testers: any[] = [];
+
+    if (isLoading || error || !data) {
+      return { temp_clients, temp_managers, temp_testers };
+    }
+
+    data.forEach((us: any) => {
+      if (us.role === 'CLIENT') temp_clients.push(us);
+      if (us.role === 'MANAGER') temp_managers.push(us);
+      if (us.role === 'TESTER') temp_testers.push(us);
+    });
+
+    return { temp_clients, temp_managers, temp_testers };
+  }, [data, error, isLoading]);
+
+
+  useEffect(() => { }, [
     showAddClientForm,
-showAddPMForm,
-showAddTestersForm,
+    showAddPMForm,
+    showAddTestersForm,
   ])
+console.log(Projects);
 
   return (
     <section className="space-y-8">
@@ -64,28 +111,28 @@ showAddTestersForm,
 
           <StatCard
             title="Clients"
-            count={128}
+            count={(isLoading || error) ? 0 : filtered.temp_clients.length}
             icon={<FiUsers size={28} />}
             onAdd={() => setShowAddClientForm(true)}
           />
 
           <StatCard
             title="Projects"
-            count={42}
+            count={projectDataLoading? 0 : Projects.length || 0}
             icon={<FiBriefcase size={28} />}
             onAdd={() => console.log("Add Project")}
           />
 
           <StatCard
             title="Project Managers"
-            count={8}
+            count={(isLoading || error) ? 0 : filtered.temp_managers.length}
             icon={<FiUserCheck size={28} />}
             onAdd={() => setShowAddPMForm(true)}
           />
 
           <StatCard
             title="Testers"
-            count={15}
+            count={(isLoading || error) ? 0 : filtered.temp_testers.length}
             icon={<FiUserCheck size={28} />}
             onAdd={() => console.log("Add Tester")}
           />

@@ -35,7 +35,7 @@ export default function Login() {
           navigate("/dashboard/admin");
         } else if (role == "MANAGER") {
           navigate("/manager");
-        } else if (role == "MEMBER") {
+        } else if (role == "TESTER") {
           navigate("/tester");
         } else {
           navigate("/dashboard");

@@ -51,7 +51,7 @@ export function getUserRole(): string | "" {
   if (userStr) {
     try {
       const user = JSON.parse(userStr);
-      return user.role || "";
+      return user.role || "CLIENT";
     } catch (e) {
       return "";
     }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../api/axios";
-import { getCurrentUser } from "../../utils/getCurrentUser";
+import { getCurrentClient, getCurrentUser } from "../../utils/getCurrentUser";
 import '../../index.css'
 
 export default function LoginClient() {
@@ -25,24 +25,10 @@ export default function LoginClient() {
       localStorage.setItem("token", res.data.token);
       
       // Fetch user info to get role
-      const user = await getCurrentUser();
-      if (user) {
-        localStorage.setItem("user", JSON.stringify(user));
-        
+      const user = await getCurrentClient();
+        localStorage.setItem("user", JSON.stringify(user));        
         // Redirect based on role
-        const role = user.role;
-        if (role === "admin") {
-          navigate("/dashboard/admin");
-        } else if (role === "manager") {
-          navigate("/dashboard/manager");
-        } else if (role === "member") {
-          navigate("/dashboard/tester");
-        } else {
-          navigate("/dashboard");
-        }
-      } else {
-        navigate("/dashboard");
-      }
+        navigate("/");
       setLoading(false);
     } catch (err: any) {
       setLoading(false);

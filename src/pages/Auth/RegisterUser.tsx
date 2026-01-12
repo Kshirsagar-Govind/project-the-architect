@@ -10,7 +10,7 @@ export default function RegisterUser() {
     email: "",
     password: "",
     confirmPassword: "",
-    role: "member",
+    role: "tester",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -47,7 +47,7 @@ export default function RegisterUser() {
         name: formData.name,
         email: formData.email,
         password: formData.password,
-        role: formData.role,
+        role: (formData.role).toUpperCase(),
       });
       
       // Save token
@@ -66,7 +66,7 @@ export default function RegisterUser() {
           const user = {
             name: formData.name,
             email: formData.email,
-            role: formData.role,
+            role: formData.role.toUpperCase(),
           };
           localStorage.setItem("user", JSON.stringify(user));
         }
@@ -75,7 +75,7 @@ export default function RegisterUser() {
         const user = {
           name: formData.name,
           email: formData.email,
-          role: formData.role,
+          role: formData.role.toUpperCase(),
         };
         localStorage.setItem("user", JSON.stringify(user));
       }
@@ -85,11 +85,11 @@ export default function RegisterUser() {
       
       // Redirect based on role
       setTimeout(() => {
-        if (formData.role === "admin") {
+        if (formData.role === "ADMIN") {
           navigate("/dashboard/admin");
-        } else if (formData.role === "manager") {
+        } else if (formData.role === "MANAGER") {
           navigate("/dashboard/manager");
-        } else if (formData.role === "member") {
+        } else if (formData.role === "MEMBER") {
           navigate("/dashboard/tester");
         } else {
           navigate("/dashboard");
@@ -163,7 +163,8 @@ export default function RegisterUser() {
               className="input-field"
               required
             >
-              <option value="member">Member</option>
+              <option value="" hidden >Select</option>
+              <option value="tester">Tester</option>
               <option value="manager">Manager</option>
             </select>
             <p className="text-xs text-gray-500 mt-1">Select your role: Member or Manager</p>

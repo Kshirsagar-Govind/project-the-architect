@@ -36,8 +36,6 @@ export default function ReportForm({ projectId }: { projectId: string }) {
 
   useEffect(() => {
     if (!isLoading && data) {
-      console.log(data, "<<-----------");
-
       const reportForm = {
         title: data.title,
         vulnerabilityType: data.vulnerabilityType,
@@ -49,8 +47,8 @@ export default function ReportForm({ projectId }: { projectId: string }) {
         recommendation: data.recommendation,
         affectedEndpoint: data.affectedEndpoint,
         proofOfConcept: data.proofOfConcept,
-        tags: data.tags,
-        cvss: data.cvss,
+        tags: (data.tags||"").toString(),
+        cvss: Number(data.cvss),
       }
       setForm(reportForm);
     }
@@ -62,11 +60,10 @@ export default function ReportForm({ projectId }: { projectId: string }) {
         projectId: p_id || '',
         report: {
           ...form,
-          severity: "medium",
-          status: "open",
-          proofOfConcept: form.proofOfConcept
-            .split("\n")
-            .filter(Boolean),
+          severity: (form.severity||"LOW").toUpperCase(),
+          status: "OPEN",
+          cvss: Number(form.cvss),
+          proofOfConcept: form.proofOfConcept,
           tags: form.tags.split(",").map(t => t.trim()),
         }
       }),
@@ -74,6 +71,9 @@ export default function ReportForm({ projectId }: { projectId: string }) {
       queryClient.invalidateQueries({ queryKey: ["vulnerability", projectId] })
       alert("Vulnerability reported successfully")
     },
+    onError:(e:any)=>{
+      console.log(e,'FAILED TO SUBMIT REPORT-------------');
+    }
   })
 
   const handleChange = (
@@ -113,8 +113,6 @@ export default function ReportForm({ projectId }: { projectId: string }) {
           }
         </select>
       </div>
-
-
 
       {/* Severity + cvss */}
       <div className="grid grid-cols-2 gap-4">

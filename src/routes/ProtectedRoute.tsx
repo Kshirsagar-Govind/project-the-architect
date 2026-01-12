@@ -8,11 +8,16 @@ interface ProtectedRouteProps {
 
 
 function ProtectedRoute({children, allowedRoles}:ProtectedRouteProps){
-    if(!isLoggedIn()){
+    const role=getUserRole();
+    const logged = isLoggedIn()
+    console.log({role, logged});
+    
+    if(!logged){
+        if(role=='CLIENT')  return <Navigate to={'/auth/login-client'} replace/>
         return <Navigate to={'/auth/login'} replace/>
     }
 
-    if(allowedRoles && !allowedRoles.includes(getUserRole())){
+    if(allowedRoles && !allowedRoles.includes(role)){
         return <Navigate to={'/unauthorised'} replace/>
     }
 

@@ -24,11 +24,32 @@ import TicketSupport from './pages/PM/TicketSupport'
 import Dashboard from './pages/Tester/dashbaord'
 import ReportForm from './pages/Tester/reportForm'
 import Overview from './pages/Tester/overview'
+import ClientLayout from './layouts/ClientLayout'
+import ClientDashboard from './pages/Client/dashboard'
+import ClientOverview from './pages/Client/overview'
+import ClientProjectReports from './pages/Client/reports'
+import ClientTicketSupport from './pages/Client/ticketSupport'
+import ClientCreditSystem from './pages/Client/creditSystem'
+import AddProject from './pages/Client/addProject'
 
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/auth/login" replace />} />
+      <Route path='/'
+        element={
+          <ProtectedRoute allowedRoles={['CLIENT']}>
+            <ClientLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<ClientDashboard />} />
+        <Route path='overview/:p_id' element={<ClientOverview />} />
+        <Route path='reports/:p_id' element={<ClientProjectReports />} />
+        <Route path='ticket-support' element={<ClientTicketSupport />} />
+        <Route path='credit-system' element={<TicketSupport />} />
+        <Route path='add-project' element={<AddProject />} />
+      </Route>
+      {/* <Route path="/" element={<Navigate to="/auth/login" replace />} /> */}
       <Route path="/unauthorized" element={<Unauthorized />} />
       <Route path="/auth/login" element={<Login />} />
       <Route path="/auth/login-client" element={<LoginClient />} />
@@ -63,7 +84,7 @@ export default function App() {
 
       <Route path='/tester'
         element={
-          <ProtectedRoute allowedRoles={['MANAGER', 'MEMBER']}>
+          <ProtectedRoute allowedRoles={['MANAGER', 'TESTER']}>
             <EmployeeLayout />
           </ProtectedRoute>
         }
@@ -73,6 +94,8 @@ export default function App() {
         <Route path='my-reports/:p_id' element={<TesterReports />} />
         <Route path='submit-report/:p_id' element={<ReportForm />} />
       </Route>
+
+      
     </Routes>
 
     
