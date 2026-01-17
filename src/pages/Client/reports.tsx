@@ -8,6 +8,7 @@ import {
   CircleCheckBig
 } from "lucide-react";
 import { useParams } from "react-router-dom";
+import { getUser } from "../../utils/auth";
 
 const table = {
   width: "100%",
@@ -45,19 +46,18 @@ const actionBtn = {
   fontSize: "13px",
 };
 const statusActions = {
-  open: ["in-progress"],
-  "in-progress": ["fixed"],
-  fixed: ["verified"],
-  verified: ["open", "closed"],
-  closed: [],
+  OPEN: ["IN-PROGRESS"],
+  "IN-PROGRESS": ["FIXED"],
+  FIXED: ["VERIFIED"],
+  CLOSED: [],
 };
 
 const STATUS_CONFIG = {
   open: { tooltip: "Change to open", color: "#fbbf24", icon: <AlertCircle color="#fbbf24" size={'22px'} /> },
-  "in-progress": { tooltip: "Change to In-progress", color: "#3b82f6", icon: <RefreshCcw color="#60a5fa" size={'22px'} /> },
-  fixed: { tooltip: "Change to Fixed", color: "#6366f1", icon: <Wrench color="#818cf8" size={'22px'} /> },
-  verified: { tooltip: "Change to Verified", color: "#22c55e", icon: <BadgeCheck color="#4ade80" size={'22px'} /> },
-  closed: { tooltip: "Change to Closed", color: "#16a34a", icon: <CircleCheckBig color="#22c55e" size={'22px'} /> },
+  "IN-PROGRESS": { tooltip: "Change to In-progress", color: "#3b82f6", icon: <RefreshCcw color="#60a5fa" size={'22px'} /> },
+  FIXED: { tooltip: "Change to Fixed", color: "#6366f1", icon: <Wrench color="#818cf8" size={'22px'} /> },
+  VERIFIED: { tooltip: "Change to Verified", color: "#22c55e", icon: <BadgeCheck color="#4ade80" size={'22px'} /> },
+  CLOSED: { tooltip: "Change to Closed", color: "#16a34a", icon: <CircleCheckBig color="#22c55e" size={'22px'} /> },
 };
 
 const severityBadge = (severity: string) => {
@@ -82,12 +82,12 @@ const severityBadge = (severity: string) => {
 
 export default function Reports() {
   const { p_id } = useParams()
-
+  const user = getUser()
   const projectId = p_id || "";
 
   const { data, error, isLoading } = useQuery({
-    queryKey: ["vulnerability", projectId],
-    queryFn: () => fetchVulnerabilities({ projectId, filters: {} }),
+    queryKey: ["vulnerability_"+user.id, projectId],
+    queryFn: () => fetchVulnerabilities({ projectId, filters: {reviewStatus:"APPROVED"} }),
     staleTime: 0,
   });
 

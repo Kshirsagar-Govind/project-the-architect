@@ -226,7 +226,7 @@ const VulnerabilityReviewUpdatePopup = ({
     const updateReviewStatus = useMutation({
     mutationFn: updateReviewStatusVulnerability,
     onSuccess: () => {
-      console.log('Deleted');
+      console.log('Updated review status');
     },
     onError: (e: any) => {
       console.log("ERROR", e);

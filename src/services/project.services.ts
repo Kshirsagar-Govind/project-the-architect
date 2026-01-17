@@ -1,5 +1,10 @@
 import api from "../api/axios"
 
+export const addNewProject=async (payload:any) => {
+    const res = await api.post(`/project`,payload)
+    return res.data.data;
+}
+
 export const fetchProjects = async (filters: any) => {
     const params = new URLSearchParams();
     if (filters.title) params.append("title", filters.title);
@@ -33,6 +38,7 @@ export const assignMembersProject=async (payload:object,p_id:string) => {
 export const fetchVulnerabilities=async ({projectId,filters}:{projectId: string, filters:any}) => {
     const params = new URLSearchParams();
     if (filters.reportedBy) params.append("reportedBy", filters.reportedBy);
+    if (filters.reviewStatus) params.append("reviewStatus", filters.reviewStatus);
     const res = await api.get(`/vulnerability/${projectId}${params.toString().length>0?'?'+params.toString():''}`);
     return res.data;
 }

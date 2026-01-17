@@ -38,10 +38,10 @@ export default function Login() {
         } else if (role == "TESTER") {
           navigate("/tester");
         } else {
-          navigate("/dashboard");
+          navigate("/");
         }
       } else {
-        navigate("/dashboard");
+        navigate("/");
       }
       setLoading(false);
     } catch (err: any) {
