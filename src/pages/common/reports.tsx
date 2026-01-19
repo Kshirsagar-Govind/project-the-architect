@@ -61,7 +61,6 @@ function Reports() {
   const { p_id } = useParams();
   const { user } = useAuth();
   const projectId = p_id;
-  console.log(user?.permissions, '>>>>>');
   const permissions = user?.permissions || [];
 
   const [hideRevoked, setHideRevoked] = useState(true);
@@ -111,7 +110,10 @@ function Reports() {
             {
               ["TESTER", "MANAGER"].includes(user?.role) && <th style={th}>Approval Status</th>
             }
-            <th style={th}>Action</th>
+            {
+              ["TESTER", "MANAGER"].includes(user?.role) && <th style={th}>Action</th>
+            }
+
           </tr>
         </thead>
 
@@ -153,8 +155,8 @@ function Reports() {
                   </td>}
 
                 <td style={td} className="text-center flex flex-row justify-center items-center">
-                  {
-                    statusActions[vul.status].length == 0 ?
+                  {user?.role == "MANAGER" &&
+                    (statusActions[vul.status].length == 0 ?
                       <button disabled>
                         <CircleCheckBig size={'22px'} color="gray" />
                       </button>
@@ -169,7 +171,7 @@ function Reports() {
                             </button>
                           </div>
                         )
-                      })
+                      }))
                   }
 
                   {
@@ -209,10 +211,4 @@ function Reports() {
     </div>
   );
 }
-
-
-
 export default Reports;
-/*
-
-*/

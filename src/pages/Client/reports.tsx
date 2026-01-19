@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { getUser } from "../../utils/auth";
+import { severityBadge } from "../../components/common/statusColorMap";
 
 const table = {
   width: "100%",
@@ -45,40 +46,6 @@ const actionBtn = {
   cursor: "pointer",
   fontSize: "13px",
 };
-const statusActions = {
-  OPEN: ["IN-PROGRESS"],
-  "IN-PROGRESS": ["FIXED"],
-  FIXED: ["VERIFIED"],
-  CLOSED: [],
-};
-
-const STATUS_CONFIG = {
-  open: { tooltip: "Change to open", color: "#fbbf24", icon: <AlertCircle color="#fbbf24" size={'22px'} /> },
-  "IN-PROGRESS": { tooltip: "Change to In-progress", color: "#3b82f6", icon: <RefreshCcw color="#60a5fa" size={'22px'} /> },
-  FIXED: { tooltip: "Change to Fixed", color: "#6366f1", icon: <Wrench color="#818cf8" size={'22px'} /> },
-  VERIFIED: { tooltip: "Change to Verified", color: "#22c55e", icon: <BadgeCheck color="#4ade80" size={'22px'} /> },
-  CLOSED: { tooltip: "Change to Closed", color: "#16a34a", icon: <CircleCheckBig color="#22c55e" size={'22px'} /> },
-};
-
-const severityBadge = (severity: string) => {
-  const colors: any = {
-    critical: "rgba(220, 38, 38, 0.7)", // soft red
-    high: "rgba(249, 115, 22, 0.7)",    // soft orange
-    medium: "rgba(250, 204, 21, 0.7)",  // soft yellow
-    low: "rgba(22, 163, 74, 0.7)",      // soft green
-  }
-    ;
-
-  return {
-    backgroundColor: colors[severity] || "#6b7280",
-    color: "#fff",
-    padding: "6px 10px",
-    borderRadius: "8px",
-    fontSize: "12px",
-    fontWeight: "bold",
-  };
-};
-
 
 export default function Reports() {
   const { p_id } = useParams()
@@ -94,7 +61,7 @@ export default function Reports() {
   if (error) return <p>Error while fetching reports</p>;
 
   const vulnerabilities = data?.data || [];
-  console.log(data,'<<=');
+  console.log(data,error, isLoading,'<<=');
   
   return (
     <div >
@@ -107,10 +74,7 @@ export default function Reports() {
             <th style={th} className="text-center">Severity</th>
             <th style={th}>Status</th>
             <th style={th}>CVSS</th>
-            <th style={th}>Endpoint</th>
-            <th style={th}>Status</th>
             <th style={th}>Reported On</th>
-            <th style={th}>Action</th>
           </tr>
         </thead>
 
@@ -139,32 +103,8 @@ export default function Reports() {
 
                     <td style={td} className="text-center">{vul.status}</td>
                     <td style={td} className="text-center">{vul.cvss}</td>
-                    <td style={td} className="text-center">{vul.affectedEndpoint}</td>
-
                     <td style={td} className="text-center">
                       {new Date(vul.createdAt).toLocaleDateString()}
-                    </td>
-
-                    <td style={td} className="text-center flex flex-row justify-center items-center">
-                      {
-                        statusActions[vul.status].length == 0 ?
-                          <button disabled>
-                            <CircleCheckBig size={'22px'} color="gray" />
-                          </button>
-                          : statusActions[vul.status].map(item => {
-                            return (
-                              <div
-                                title={item.tooltip}
-                                className="">
-                                <button
-                                  className="px-1">
-                                  {STATUS_CONFIG[item].icon}
-                                </button>
-                              </div>
-                            )
-                          })
-                      }
-
                     </td>
                   </tr>
                 ))}

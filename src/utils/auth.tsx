@@ -10,6 +10,7 @@ interface UserData {
   name: string;
   email: string;
   role: string;
+  permissions:[];
 }
 
 export async function getCurrentUser(): Promise<UserData | null> {

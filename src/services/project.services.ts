@@ -10,10 +10,9 @@ export const fetchProjects = async (filters: any) => {
     if (filters.title) params.append("title", filters.title);
     if (filters.clientEmail) params.append("clientEmail", filters.clientEmail);
     if (filters.status) params.append("status", filters.status);
-    if (filters.manager) params.append("manager", filters.manager);
-    if (filters.member) params.append("member", filters.member);
-    if (filters.client) params.append("client", filters.client);
-    console.log(filters,'filters');
+    if (filters.manager!='') params.append("manager", filters.manager);
+    if (filters.member!='') params.append("member", filters.member);
+    if (filters.client!='') params.append("client", filters.client);
     
     const res = await api.get(`/project?${params.toString()}`)
     return res.data.data;
@@ -42,6 +41,12 @@ export const fetchVulnerabilities=async ({projectId,filters}:{projectId: string,
     const res = await api.get(`/vulnerability/${projectId}${params.toString().length>0?'?'+params.toString():''}`);
     return res.data;
 }
+
+export const fetchVulnerabilitiesStats=async ({projectId}:{projectId: string}) => {
+    const res = await api.get(`/vulnerability/${projectId}/stats`);
+    return res.data.data;
+}
+
 
 export const deleteVulnerability=async ({reportId}:{reportId: string}) => {
     const res = await api.patch(`/vulnerability/${reportId}/delete`);

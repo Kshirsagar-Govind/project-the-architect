@@ -29,12 +29,29 @@ import ClientDashboard from './pages/Client/dashboard'
 import ClientOverview from './pages/Client/overview'
 import ClientProjectReports from './pages/Client/reports'
 import ClientTicketSupport from './pages/Client/ticketSupport'
-import ClientCreditSystem from './pages/Client/creditSystem'
+import Layout from './layouts';
 import AddProject from './pages/Client/addProject'
-
+import CommonReports from './pages/common/reports';
+import CommonDashboard from './pages/common/dashboard';
 export default function App() {
   return (
     <Routes>
+      <Route path='/'
+        element={
+          <ProtectedRoute allowedRoles={['CLIENT', "MANAGER", "TESTER", "ADMIN"]}>
+            <Layout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<CommonDashboard />} />
+        <Route path='/reports/:p_id' element={<CommonReports />} />
+        <Route path='overview/:p_id' element={<ClientOverview />} />
+        <Route path='ticket-support/:p_id' element={<TicketSupport />} />
+        <Route path='credit-system' element={<TicketSupport />} />
+        <Route path='add-project' element={<AddProject />} />
+        <Route path='submit-report/:p_id' element={<ReportForm />} />
+
+      </Route>
       <Route path='/'
         element={
           <ProtectedRoute allowedRoles={['CLIENT']}>
@@ -42,12 +59,6 @@ export default function App() {
           </ProtectedRoute>
         }
       >
-        <Route index element={<ClientDashboard />} />
-        <Route path='overview/:p_id' element={<ClientOverview />} />
-        <Route path='reports/:p_id' element={<ClientProjectReports />} />
-        <Route path='ticket-support' element={<ClientTicketSupport />} />
-        <Route path='credit-system' element={<TicketSupport />} />
-        <Route path='add-project' element={<AddProject />} />
       </Route>
       {/* <Route path="/" element={<Navigate to="/auth/login" replace />} /> */}
       <Route path="/unauthorized" element={<Unauthorized />} />
@@ -90,14 +101,11 @@ export default function App() {
         }
       >
         <Route index element={<Dashboard />} />
-        <Route path='overview/:p_id' element={<Overview />} />
-        <Route path='my-reports/:p_id' element={<TesterReports />} />
-        <Route path='submit-report/:p_id' element={<ReportForm />} />
       </Route>
 
-      
+
     </Routes>
 
-    
+
   )
 }

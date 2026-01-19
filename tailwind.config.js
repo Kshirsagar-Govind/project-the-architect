@@ -31,6 +31,12 @@ export default {
           800: '#424242',
           900: '#212121',
         },
+        stats: {
+        CRITICAL: "rgba(220, 38, 38, 0.7)", // soft red
+        HIGH: "rgba(249, 115, 22, 0.7)",    // soft orange
+        MEDIUM: "rgba(250, 204, 21, 0.7)",  // soft yellow
+        LOW: "rgba(22, 163, 74, 0.7)",      // soft green
+        },
         primary: {
           DEFAULT: "#00897B",
           light: "#4DB6AC",

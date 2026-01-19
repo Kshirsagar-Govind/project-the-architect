@@ -3,6 +3,7 @@ import api from "../api/axios";
 interface TokenPayload {
   id: string;
   email: string;
+  permissions:[];
 }
 
 interface User {
@@ -10,6 +11,7 @@ interface User {
   name: string;
   email: string;
   role: string;
+  permissions:[];
 }
 
 export async function getCurrentUser(): Promise<User | null> {
@@ -20,10 +22,12 @@ export async function getCurrentUser(): Promise<User | null> {
     // Decode token to get user ID
     let userId: string | null = null;
     let userEmail: string | null = null;
+    // let userPermissions: [] | null = [];
     try {
       const payload = JSON.parse(atob(token.split(".")[1])) as TokenPayload;
       userId = payload.id || null;
       userEmail = payload.email || null;
+      // userPermissions = payload.permissions || null;
     } catch (e) {
       console.error("Error decoding token:", e);
       return null;

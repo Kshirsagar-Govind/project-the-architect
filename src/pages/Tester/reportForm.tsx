@@ -4,7 +4,7 @@ import { createVulnerability, fetchVulnerability } from "../../services/project.
 import { VULNERABILITY_SEVERITY, VULNERABILITY_TYPES } from '../../utils/constants';
 import { useParams } from "react-router-dom";
 
-export default function ReportForm({ projectId }: { projectId: string }) {
+export default function ReportForm() {
   const queryClient = useQueryClient()
   const { p_id } = useParams()
   const [report_id, setReportId] = useState(() => {

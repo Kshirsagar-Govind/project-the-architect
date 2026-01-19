@@ -69,7 +69,7 @@ export default function ProjectCard({ role, project }: Props) {
 
         <NavLink
           className={'pl-5 inline-flex items-center py-2 w-full h-full'}
-          to={`/${role == 'MANAGER' ? 'manager/' : role=='TESTER'? 'tester/':''}overview/${project.id}`}>
+          to={`/reports/${project.id}`}>
           Go to</NavLink>
       </div>
 

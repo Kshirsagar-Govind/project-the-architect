@@ -15,74 +15,99 @@ export const adminLinks = [
     linkPath: "/dashboard/admin",
     linkLabel: "Dashboard",
     icon: FiGrid,
+    role: "ADMIN"
   },
   {
     linkPath: "/dashboard/admin/projects",
     linkLabel: "Projects",
     icon: FiFolder,
+    role: "ADMIN"
   },
   {
     linkPath: "/dashboard/admin/clients",
     linkLabel: "Clients",
     icon: FiUsers,
+    role: "ADMIN"
   },
   {
     linkPath: "/dashboard/admin/pm",
     linkLabel: "Managers",
     icon: FiUserCheck,
+    role: "ADMIN"
   },
   {
     linkPath: "/dashboard/admin/employees",
     linkLabel: "Testers",
     icon: FiUser,
+    role: "ADMIN"
   },
 ];
 
-export const managerLinks= [
+export const managerLinks = [
+  // {
+  //   linkPath: "/overview/:p_id ",
+  //   linkLabel: "Overview",
+  //   icon: MdAnalytics,
+  //   role: "MANAGER"
+  // },
   {
-    linkPath: "/manager/overview/:p_id ",
-    linkLabel: "Overview",
-    icon: MdAnalytics,
-  },
-  {
-    linkPath: "/manager/reports/:p_id ",
+    linkPath: "/reports/:p_id ",
     linkLabel: "Reports",
     icon: FiGrid,
+    role: "MANAGER"
   },
   {
-    linkPath: "/manager/ticket-support/:p_id",
+    linkPath: "/ticket-support/:p_id",
     linkLabel: "Ticket Support",
     icon: FiGrid,
+    role: "MANAGER"
   },
 ]
 
-export const testerLinks= [
+export const testerLinks = [
+  // {
+  //   linkPath: "/overview/:p_id",
+  //   linkLabel: "Overview",
+  //   icon: MdAnalytics,
+  //   role: "TESTER"
+  // },
   {
-    linkPath: "/tester/overview/:p_id",
-    linkLabel: "Overview",
-    icon: MdAnalytics,
-  },
-  {
-    linkPath: "/tester/my-reports/:p_id",
+    linkPath: "/reports/:p_id",
     linkLabel: "My Reports",
     icon: MdError,
+    role: "TESTER"
   },
   {
-    linkPath: "/tester/submit-report/:p_id",
+    linkPath: "/submit-report/:p_id",
     linkLabel: "Submit Report",
     icon: FaFileLines,
+    role: "TESTER"
   },
 ]
 
-export const clientLinks= [
+export const clientLinks = [
   {
     linkPath: "/overview/:p_id",
     linkLabel: "Overview",
     icon: MdAnalytics,
+    role: "CLIENT"
   },
   {
     linkPath: "/reports/:p_id",
     linkLabel: "Reports",
     icon: MdError,
-  }
+    role: "CLIENT"
+  },
+    {
+    linkPath: "/ticket-support/:p_id",
+    linkLabel: "Ticket Support",
+    icon: FiGrid,
+    role: "CLIENT"
+  },
 ]
+
+export const Links = [...adminLinks,
+...managerLinks,
+...testerLinks,
+...clientLinks
+] 

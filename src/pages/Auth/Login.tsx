@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 import { getCurrentUser } from "../../utils/getCurrentUser";
 import '../../index.css'
+import { useAuth } from "../../hooks/useAuth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -10,6 +11,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async (e?: React.FormEvent) => {e
@@ -23,20 +25,19 @@ export default function Login() {
       setLoading(true);
       const res = await api.post("/auth/login", { email, password });
       localStorage.setItem("token", res.data.token);
-      
       // Fetch user info to get role
       const user = await getCurrentUser();
       if (user) {
-        localStorage.setItem("user", JSON.stringify(user));
-        
+        // localStorage.setItem("user", JSON.stringify(user));
+        login({token:res.data.token,user:res.data.user})
         // Redirect based on role
         const role = user.role;
         if (role == "ADMIN") {
           navigate("/dashboard/admin");
         } else if (role == "MANAGER") {
-          navigate("/manager");
+          navigate("/");
         } else if (role == "TESTER") {
-          navigate("/tester");
+          navigate("/");
         } else {
           navigate("/");
         }

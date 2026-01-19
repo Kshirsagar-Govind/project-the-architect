@@ -1,21 +1,14 @@
-import { Outlet, NavLink, useParams, useNavigate } from "react-router-dom";
-import { clientLinks, testerLinks } from "../pages/Admin/routes";
+import { Outlet, NavLink, useParams } from "react-router-dom";
+import { Links } from "../pages/Admin/routes";
 import { FiBell, FiChevronDown, FiLogOut, FiUser } from "react-icons/fi";
-import { BsTicketFill } from "react-icons/bs"
-import { getUser } from "../utils/auth";
 import { logout } from "../services/auth.service";
-import { useEffect } from "react";
 import { RiDashboardHorizontalFill } from "react-icons/ri";
+import { useAuth } from "../hooks/useAuth";
 
-export default function ClientLayout() {
-    const user = getUser()
-    const navigate = useNavigate()
+export default function PMLayout() {
+    const { user } = useAuth();
+    const role = user?.role || "TESTER";
     const { p_id } = useParams()
-    useEffect(() => {
-        if (!user) {
-            navigate('/auth/login-client')
-        }
-    }, [user, navigate])
 
     return (
         <div className="flex min-h-screen bg-gray-100">
@@ -27,26 +20,27 @@ export default function ClientLayout() {
                 </h3>
                 <nav className="space-y-3">
                     <ul>
-                        <NavLink className={'pl-5 inline-flex items-center py-3 w-full h-full hover:bg-primary-darker'} to={'/'}>
+                        <NavLink className={'pl-5 inline-flex items-center py-2 w-full h-full'} to={'/'}>
                             <span className="pr-3"><RiDashboardHorizontalFill /></span>
                             Dashboard
                         </NavLink>
-                        <NavLink className={'pl-5 inline-flex items-center py-3 w-full h-full hover:bg-primary-darker'} to={'/add-project'}>
+                        {role == "CLIENT" && <NavLink className={'pl-5 inline-flex items-center py-3 w-full h-full hover:bg-primary-darker'} to={'/add-project'}>
                             <span className="pr-3"><RiDashboardHorizontalFill /></span>
                             New Project
-                        </NavLink>
-                        {p_id != undefined &&
-                            clientLinks.map((link, index) => {
-                                return (
-                                    <li key={index} className="flex align-middle items-center py-3  hover:bg-primary-darker">
-                                        <NavLink className={'pl-5 inline-flex items-center w-full h-full'} to={link.linkPath.replace(':p_id', p_id)}>
-                                            <span className="pr-3">{<link.icon />}</span>
-                                            {link.linkLabel}
-                                        </NavLink>
-                                    </li>
-                                )
+                        </NavLink>}
+                        {
+                            p_id != undefined && Links.map((link, index) => {
+                                if (role == link.role) {
+                                    return (
+                                        <li key={index} className="flex align-middle items-center my-3 hover:bg-primary-darker">
+                                            <NavLink className={'pl-5 inline-flex items-center py-2 w-full h-full'} to={link.linkPath.replace(':p_id', p_id)}>
+                                                <span className="pr-3">{<link.icon />}</span>
+                                                {link.linkLabel}
+                                            </NavLink>
+                                        </li>
+                                    )
+                                }
                             })
-
                         }
                     </ul>
                 </nav>
@@ -56,24 +50,21 @@ export default function ClientLayout() {
 
                 <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
                     <div className="font-medium text-gray-700">
-                        Client
+                        {role}
                     </div>
 
                     <div className="flex items-center gap-6">
-                        <div className="flex flex-row items-center bg-primary px-3 py-1 rounded-md text-white">
-                            <button>Ticket Support</button>
-                        </div>
+
                         <button className="relative text-gray-600 hover:text-gray-800">
                             <FiBell size={20} />
                             <span className="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full"></span>
                         </button>
 
                         <div className="relative group cursor-pointer">
-
                             <div className="flex items-center gap-2 text-gray-700">
                                 <FiUser />
                                 <span className="text-sm font-medium">
-                                    {user.name}
+                                    {user?.name}
                                 </span>
                                 <FiChevronDown size={16} />
                             </div>

@@ -4,6 +4,7 @@ import { getUser } from "../../utils/auth";
 import { MdEditDocument, MdDelete } from "react-icons/md"
 import { useNavigate, useParams } from 'react-router-dom'
 import { useState } from "react";
+import { approvalStatusBadge, severityBadge } from "../../components/common/statusColorMap";
 
 const table = {
   width: "100%",
@@ -41,23 +42,6 @@ const actionBtn = {
   fontSize: "13px",
 };
 
-const severityBadge = (severity: string) => {
-  const colors: any = {
-    CRITICAL: "rgba(220, 38, 38, 0.7)", // soft red
-    HIGH: "rgba(249, 115, 22, 0.7)",    // soft orange
-    MEDIUM: "rgba(250, 204, 21, 0.7)",  // soft yellow
-    LOW: "rgba(22, 163, 74, 0.7)",      // soft green
-  };
-
-  return {
-    backgroundColor: colors[severity] || "#6b7280",
-    color: "#fff",
-    padding: "6px 10px",
-    borderRadius: "8px",
-    fontSize: "12px",
-    fontWeight: "bold",
-  };
-};
 
 
 export default function Reports() {
@@ -107,6 +91,7 @@ export default function Reports() {
             <th style={th}>CVSS</th>
             <th style={th}>Endpoint</th>
             <th style={th}>Reported On</th>
+            <th style={th}>Review Status</th>
             <th style={th} className="text-center">Action</th>
           </tr>
         </thead>
@@ -132,14 +117,21 @@ export default function Reports() {
                 <td style={td} className="text-center">
                   {new Date(vul.createdAt).toLocaleDateString()}
                 </td>
+                <td style={td} className="text-center">
+                  <span 
+                  style={approvalStatusBadge(vul.reviewStatus)}>
+                    {vul.reviewStatus.toUpperCase()}
+                  </span>
+                </td>
 
                 <td style={td} className="text-center flex flex-row justify-center items-center">
                   <button
+                    disabled={vul.reviewStatus.toUpperCase()=='APPROVED'}
                     style={actionBtn}
                     // className="bg-primary-dark"
                     onClick={() => navigate(`/tester/submit-report/${projectId}?report_id=${vul.id}`)}
                   >
-                    <MdEditDocument className="text-primary" size={'20px'} />
+                    <MdEditDocument className={vul.reviewStatus.toUpperCase()=='APPROVED'?"text-gray-300":"text-primary"} size={'20px'} />
                   </button>
                   <button
                     style={actionBtn}
